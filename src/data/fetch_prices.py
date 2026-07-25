@@ -19,7 +19,7 @@ def get_sp500_tickers():
     return tickers
 
 # Downloads ticker data
-def fetch_prices(ticker, start="2023-01-01", end=None):
+def fetch_prices(ticker, start="2020-01-01", end=None):
     data = yf.download(ticker, start=start, end=end, group_by="ticker",auto_adjust=True)
     return data
 
