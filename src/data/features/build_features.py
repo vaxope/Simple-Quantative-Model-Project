@@ -39,7 +39,7 @@ def add_lagged_returns(df: pd.DataFrame, lags: list[int] = [1, 5, 10, 20], price
     return df
 
 # Adds rolling volatility to df with different windows
-def add_rolling_volatility(df: pd.DataFrame, windows: list[int] = [5, 10, 20], return_col: str = 'log_return') -> pd.DataFrame:
+def add_log_rolling_volatility(df: pd.DataFrame, windows: list[int] = [5, 10, 20], return_col: str = 'log_return') -> pd.DataFrame:
     df = df.copy()
     df = df.sort_values(by=['ticker', 'date'])
 
@@ -47,7 +47,7 @@ def add_rolling_volatility(df: pd.DataFrame, windows: list[int] = [5, 10, 20], r
         col_name = f'vol_{w}d'
 
         df[col_name] = df.groupby('ticker')[return_col].transform(
-            lambda x: x.rolling(window=w).std() * np.sqrt(252)
+            lambda x: np.log(x.rolling(window=w).std() * np.sqrt(252))
         )
     
     return df
