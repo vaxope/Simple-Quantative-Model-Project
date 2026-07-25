@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import yfinance as yf
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
