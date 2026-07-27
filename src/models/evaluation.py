@@ -69,8 +69,14 @@ def run_walk_forward(df: pd.DataFrame, feature_cols: list[str], target_col: str,
         model.fit(X_train, y_train)
         preds = model.predict(X_test)
 
-        # Calculates metrics and attaches fold numbers and exact start/end dates
+        # Checks for overfitting
         metrics = evaluate_predictions(y_test, preds)
+        metrics["test_rmse"] = metrics["RMSE"]
+        train_preds = model.predict(X_train)
+        train_metrics = evaluate_predictions(y_train, train_preds)
+        metrics["train_rmse"] = train_metrics["RMSE"]
+
+        # Calculates metrics and attaches fold numbers and exact start/end dates
         metrics['folds'] = i
         metrics['train_start'], metrics['train_end'] = train_dates[0], train_dates[-1]
         metrics['test_start'], metrics['test_end'] = test_dates[0], test_dates[-1]
