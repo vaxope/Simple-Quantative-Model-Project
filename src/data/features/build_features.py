@@ -46,10 +46,19 @@ def add_log_rolling_volatility(df: pd.DataFrame, windows: list[int] = [5, 10, 20
     for w in windows:
         col_name = f'vol_{w}d'
 
-        df[col_name] = df.groupby('ticker')[return_col].transform(
-            lambda x: np.log(x.rolling(window=w).std() * np.sqrt(252))
+        rolling_std = df.groupby('ticker')[return_col].transform(
+            lambda x: x.rolling(window=w).std() * np.sqrt(252)
         )
-    
+        
+        # Floor anything below realistic min vol to 0
+        rolling_std = np.where(rolling_std < 1e-8, 0.0, rolling_std)
+
+        # Take log safely, then lcean up zero-vol points to 0.0
+        with np.errstate(divide='ignore'):
+            log_vol = np.log(rolling_std)
+            
+        df[col_name] = np.where(np.isinf(log_vol), 0.0, log_vol)
+
     return df
 
 # Rolling z score based on close with different windows

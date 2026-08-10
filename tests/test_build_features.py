@@ -6,7 +6,7 @@ from src.data.features.build_features import (
     load_prices_long,
     add_log_returns,
     add_lagged_returns,
-    add_rolling_volatility,
+    add_log_rolling_volatility,
     add_rolling_z_score,
     add_rsi,
 )
@@ -77,7 +77,7 @@ def test_lagged_return_cross_ticker_leakage():
     bbb_second_row = result[result['ticker'] == 'BBB'].iloc[1]
     assert np.isclose(bbb_second_row['return1d'], np.log(30.0 / 25.0))
 
-def test_rolling_volatility_calc():
+def test_log_rolling_volatility_calc():
     df = pd.DataFrame({
         'ticker': ['AAA', 'AAA', 'AAA', 'AAA', 'AAA'],
         'date': pd.date_range('2023-01-01', periods=5),
@@ -85,7 +85,7 @@ def test_rolling_volatility_calc():
     })
     
     df = add_log_returns(df)
-    result = add_rolling_volatility(df, windows=[1, 2])
+    result = add_log_rolling_volatility(df, windows=[1, 2])
 
     # vol_1 should all be na because std has a denominator of n - 1, and 1 - 1 = 0
     assert pd.isna(result["vol_1d"].iloc[0])
@@ -101,10 +101,12 @@ def test_rolling_volatility_calc():
     assert np.isclose(result["vol_2d"].iloc[2], 0.0, atol=1e-9)
     assert np.isclose(result["vol_2d"].iloc[3], 0.0, atol=1e-9)
     
-    expected_vol = (np.abs(np.log(133.1/121.0)-np.log(150.0/133.1))/np.sqrt(2)) * np.sqrt(252)
-    assert np.isclose(result["vol_2d"].iloc[4], expected_vol, atol=1e-6) 
+    ret3 = np.log(133.1 / 121.0)
+    ret4 = np.log(150.0 / 133.1)
+    expected_vol = np.log(np.std([ret3, ret4], ddof=1) * np.sqrt(252))
+    assert np.isclose(result["vol_2d"].iloc[4], expected_vol, atol=1e-6)
 
-def test_rolling_volatility_cross_ticker_leakage():
+def test_log_rolling_volatility_cross_ticker_leakage():
     df = pd.DataFrame({
         'ticker': ['AAA', 'AAA', 'AAA', 'BBB', 'BBB', 'BBB'],
         'date': pd.to_datetime(['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-01', '2023-01-02', '2023-01-03']),
@@ -112,7 +114,7 @@ def test_rolling_volatility_cross_ticker_leakage():
     })
     
     df = add_log_returns(df)
-    result = add_rolling_volatility(df, windows=[2])
+    result = add_log_rolling_volatility(df, windows=[2])
     
     bbb_rows = result[result['ticker'] == 'BBB']
     assert pd.isna(bbb_rows["vol_2d"].iloc[0])
