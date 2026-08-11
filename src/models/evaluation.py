@@ -108,7 +108,7 @@ def get_walk_forward_predictions(df: pd.DataFrame, feature_cols: list[str], targ
         
         # Store test_df alongside out-of-sample predictions
         test_pred_df = test_df[['ticker', 'date', 'log_return', target_col]].copy()
-        test_pred_df['predicted_log_vol'] = model_factory.predict(X_test)
+        test_pred_df['predicted_log_vol'] = model.predict(X_test)
         oof_preds.append(test_pred_df)
     
     # Combines all test folds into single df
