@@ -28,6 +28,15 @@ def test_backtest_calc():
     assert_series_equal(result['cost'], expected_cost)
     assert_series_equal(result['net_return'], expected_net_return)
 
+def test_backtest_calc_calmar():
+    # 252 days of +0.1% daily, so 0 drawdown
+    returns = pd.Series([0.001] * 252)
+    metrics = compute_backtest_metrics(returns)
+    
+    assert metrics['Max Drawdown'] == 0.0
+    assert np.isinf(metrics['Calmar Ratio'])
+    
+
 def test_backtest_cross_ticker_leakage():
     dates = list(pd.date_range("2023-01-01", periods=5)) * 2
     df = pd.DataFrame({
