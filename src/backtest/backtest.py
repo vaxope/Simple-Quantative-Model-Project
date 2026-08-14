@@ -27,8 +27,8 @@ def compute_backtest_metrics(net_returns: pd.Series, periods_per_year: int = 252
             {
                 "Annualized Return": np.nan,
                 "Sharpe": np.nan,
-                "Max_Drawdown": np.nan,
-                "Calmar ratio": np.nan,
+                "Max Drawdown": np.nan,
+                "Calmar Ratio": np.nan,
             }
         )
         
@@ -45,7 +45,7 @@ def compute_backtest_metrics(net_returns: pd.Series, periods_per_year: int = 252
     
     # Annual return and calamar ratio
     num_years = len(net_returns) / periods_per_year
-    ann_return = (cum_ret.iloc[-1]) ** (1/periods_per_year) - 1 if num_years > 0 else np.nan
+    ann_return = (cum_ret.iloc[-1]) ** (1/num_years) - 1 if num_years > 0 else np.nan
 
     calamar = ann_return / abs(max_dd) if abs(max_dd) > 0 else (np.nan if np.isnan(ann_return) else np.inf)
     
