@@ -49,4 +49,12 @@ def fetch_or_load_prices(data_config: dict) -> pd.DataFrame:
         df = df[(df["date"] >= pd.to_datetime(start_date)) & (df["date"] <= pd.to_datetime(end_date))]
 
     return df.reset_index(drop=True)
-    
+
+# Attaches every feature column config asks for
+def build_feature_frame(data_config: dict) -> pd.DataFrame:
+    df = fetch_or_load_prices()
+    df = add_log_returns(df)
+    df = add_lagged_returns(df, lags=data_config["features"]["lags"])
+    df = add_log_rolling_volatility(df, windows=data_config["features"]["vol_windows"])
+    df = add_rolling_z_score(df, windows=data_config["features"]["zscore_windows"])
+    df = add_rsi(df, windows=data_config["features"]["rsi_windows"])

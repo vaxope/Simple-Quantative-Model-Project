@@ -9,8 +9,15 @@ data:
   tickers:                # Used only if use_sp500 is false
     - SPY
     - QQQ
-    - IWM
-    - XLF
-    - XLK
+    - VOO
+    - NVDA
+    - MSFT
+    - AAPL
   start_date: "2018-01-01"
   end_date: "2026-08-01"
+
+features:
+  lags: [1, 2, 3, 5, 10, 21]
+  vol_windows: [5, 10, 20]
+  zscore_windows: [5, 10, 20]
+  rsi:windows: [14]
