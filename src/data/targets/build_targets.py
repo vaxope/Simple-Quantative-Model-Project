@@ -8,10 +8,15 @@ def add_volatility_target(df: pd.DataFrame, horizons: list[int] = [5], return_co
     for h in horizons:
         col_name = f'target_vol_{h}d'
 
-        # Shift by -h to move past values into future
-        df[col_name] = df.groupby('ticker')[return_col].transform(
-            lambda x: np.log((x.rolling(window=h).std() * np.sqrt(252)).shift(-h))
+        # Flat window makes np.log(0)==-inf not NAN so xgboost won't crash
+        future_std = df.groupby("ticker")[return_col].transform(
+            lambda x: x.rolling(window=h).std().shift(-h)
         )
+
+        with np.errstate(divide="ignore"):
+            log_vol = np.log(future_std * np.sqrt(252))
+
+        df[col_name] = np.where(np.isinf(log_vol), np.nan, log_vol)
         
     return df
 
