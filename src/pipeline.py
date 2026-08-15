@@ -59,3 +59,15 @@ def build_feature_frame(data_config: dict) -> pd.DataFrame:
     df = add_rolling_z_score(df, windows=data_config["features"]["zscore_windows"])
     df = add_rsi(df, windows=data_config["features"]["rsi_windows"])
     return df
+
+def build_target_frame(df, data_config: dict) -> pd.DataFrame:
+    target_type = data_config["target"]["type"]
+    horizons = data_config["target"]["horizons"]
+
+    df = add_volatility_target(df, horizons=horizons)
+    target_col = f"target_vol_{horizons[0]}d"
+    return df, target_col
+
+
+
+
