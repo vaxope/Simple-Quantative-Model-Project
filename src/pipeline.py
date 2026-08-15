@@ -71,7 +71,10 @@ def build_target_frame(df, config: dict) -> pd.DataFrame:
 def get_feature_cols(config: dict) -> list[str]:
     cols = []
     cols += [f"return{1}d" for 1 in config["features"]["lags"]]
-
+    cols += [f"vol_{w}d" for w in config["features"]["vol_windows"]]
+    cols += [f"z_{w}d" for w in config["features"]["zscore_windows"]]
+    cols += [f"rsi_{w}d" for w in config["features"]["rsi_windows"]]
+    return cols
 
 
 
