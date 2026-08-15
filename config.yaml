@@ -21,3 +21,24 @@ features:
   vol_windows: [5, 10, 20]
   zscore_windows: [5, 10, 20]
   rsi:windows: [14]
+
+  target:
+  type: volatility
+  horizons: [5]
+
+model:
+  name: xgb          # one of: linear, xgb  
+  train_size: 252    # trading days of history per walk-forward fold
+  test_size: 21
+  step: null          # defaults to test_size so that we have non-overlapping folds
+
+position_sizing:
+  target_vol: 0.15
+  max_leverage: 2.0
+
+backtest:
+  cost_bps: 5.0
+  periods_per_year: 252
+
+output:
+  run_name: baseline_xgb_vol5d
