@@ -18,7 +18,7 @@ def main():
 
     run_name = config["output"]["run_name"]
     print(f"Running pipeline: {run_name}")
-    print(f"  tickers: {config['tickers']}")
+    print(f"  tickers: {config['data']['tickers']}")
     print(f"  model:   {config['model']['name']}")
 
     results = run_full_pipeline(config)

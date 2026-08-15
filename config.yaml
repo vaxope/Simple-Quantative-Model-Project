@@ -1,12 +1,12 @@
 data:
   price_path: "data/raw_prices.parquet"
-  force_download: false   # Only true if you want to redownload data
-  use_sp500: true         # Automatically download all S&P 500 tickers
-  etfs:                   # Additional etfs alongside S&P 500
+  force_download: false
+  use_sp500: true
+  etfs:
     - SPY
     - QQQ
     - VOO
-  tickers:                # Used only if use_sp500 is false
+  tickers:
     - SPY
     - QQQ
     - VOO
@@ -20,17 +20,17 @@ features:
   lags: [1, 2, 3, 5, 10, 21]
   vol_windows: [5, 10, 20]
   zscore_windows: [5, 10, 20]
-  rsi:windows: [14]
+  rsi_windows: [14]
 
-  target:
+target:
   type: volatility
   horizons: [5]
 
 model:
-  name: xgb          # one of: linear, xgb  
-  train_size: 252    # trading days of history per walk-forward fold
+  name: xgb
+  train_size: 252
   test_size: 21
-  step: null          # defaults to test_size so that we have non-overlapping folds
+  step: null
 
 position_sizing:
   target_vol: 0.15

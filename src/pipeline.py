@@ -27,10 +27,6 @@ def fetch_or_load_prices(config: dict) -> pd.DataFrame:
     price_path = Path(config.get("price_path", "data/raw_prices.parquet"))    
     force_download = config.get("force_download", False)
 
-    # Load prices if available
-    if price_path.exists() and not force_download:
-        return load_prices_long(str(price_path))
-
     # Chooses what tickers to get
     use_sp500 = config.get("use_sp500", False)
     if use_sp500:
@@ -43,11 +39,16 @@ def fetch_or_load_prices(config: dict) -> pd.DataFrame:
     start_date = config.get("start_date", "2018-01-01")
     end_date = config.get("end_date", "2026-08-01")
 
+    # Load prices if available
+    if price_path.exists() and not force_download:
+        return load_prices_long(str(price_path), tickers)
+
+    
     # Fetches and downloads ticker data
     df_raw = fetch_prices(tickers, start=start_date, end=end_date)
     price_path.parent.mkdir(parents=True, exist_ok=True)
     df_raw.to_parquet(price_path)
-    df = load_prices_long(str(price_path))
+    df = load_prices_long(str(price_path), tickers)
 
     # Date bounds filter
     if "date" in df.columns:
@@ -76,7 +77,7 @@ def build_target_frame(df, config: dict) -> pd.DataFrame:
 
 def get_feature_cols(config: dict) -> list[str]:
     cols = []
-    cols += [f"return{1}d" for 1 in config["features"]["lags"]]
+    cols += [f"return{l}d" for l in config["features"]["lags"]]
     cols += [f"vol_{w}d" for w in config["features"]["vol_windows"]]
     cols += [f"z_{w}d" for w in config["features"]["zscore_windows"]]
     cols += [f"rsi_{w}d" for w in config["features"]["rsi_windows"]]
@@ -84,7 +85,7 @@ def get_feature_cols(config: dict) -> list[str]:
 
 def run_full_pipeline(config: dict) -> dict:
     df = build_feature_frame(config)
-    df, target_col = build_target_frame(config)
+    df, target_col = build_target_frame(df, config)
     feature_cols = get_feature_cols(config)
 
     model_name = config["model"]["name"]
@@ -98,6 +99,7 @@ def run_full_pipeline(config: dict) -> dict:
     preds = get_walk_forward_predictions(
         df,
         feature_cols,
+        target_col,
         model_factory,
         train_size = config["model"]["train_size"],
         test_size = config["model"]["test_size"],

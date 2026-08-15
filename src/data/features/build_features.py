@@ -10,10 +10,30 @@ def load_prices_long(path: str, tickers: list[str]) -> pd.DataFrame:
 
     frames = []
     for t in tickers:
+        # Skip ticker not present in file
+        if t not in wide.columns.get_level_values(0):
+            continue
         sub = wide[t].copy()                              
         sub['ticker'] = t                                  
-        sub = sub.reset_index().rename(columns={'Price': 'price', 'Date': 'date', 'Close': 'close', 'Open': 'open', 'High': 'high', 'Low': 'low', 'Volume': 'volume'})  
+        sub = sub.reset_index().rename(
+            columns={
+                'Price': 'price', 
+                'Date': 'date', 
+                'Close': 'close', 
+                'Open': 'open', 
+                'High': 'high', 
+                'Low': 'low', 
+                'Volume': 'volume'
+            }
+        )  
         frames.append(sub)
+
+    if not frames:
+        raise ValueError(
+            f"None of the requested tickers {tickers} were found in {path}. "
+            "Check that the file was downloaded with this ticker list, or "
+            "set force_download: true to re-fetch."
+        )
     return pd.concat(frames, ignore_index=True)             
 
 # Adds log returns to df
