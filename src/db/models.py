@@ -15,7 +15,7 @@ class Price(Base):
     volumn = Column(Float)
 
 class BacktestRun(Base):
-    __table__name = "backtest_runs"
+    __tablename__ = "backtest_runs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     run_name = Column(String, nullable=False)
@@ -31,9 +31,9 @@ class BacktestRun(Base):
     created_at = Column(DateTime, nullable=False)
 
 class BacktestResult(Base):
-    __table__name = "backtest_results"
+    __tablename__ = "backtest_results"
 
-    id = Column(Integer, primary_key=True, autoincremenent=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     run_id = Column(Integer, ForeignKey("backtest_runs.id"), nullable=False)
     ticker = Column(String, nullable=False)
     date = Column(Date, nullable=False)
@@ -45,9 +45,9 @@ class BacktestResult(Base):
     net_return = Column(Float)
 
 class Prediction(Base):
-    __table__name = "predictions"
+    __tablename__ = "predictions"
 
-    id = Column(Integer, primary_key=True, autoincremenent=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     run_id = Column(Integer, ForeignKey("backtest_runs.id"), nullable=False)
     ticker = Column(String, nullable=False)
     date = Column(Date, nullable=False)
