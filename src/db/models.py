@@ -29,4 +29,28 @@ class BacktestRun(Base):
     calmar = Column(Float, nullable=False)
     annualized_return = Column(Float, nullable=False)
     created_at = Column(DateTime, nullable=False)
-   
+
+class BacktestResult(Base):
+    __table__name = "backtest_results"
+
+    id = Column(Integer, primary_key=True, autoincremenent=True)
+    run_id = Column(Integer, ForeignKey("backtest_runs.id"), nullable=False)
+    ticker = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
+    position = Column(Float)
+    position_lagged = Column(Float)
+    gross_return = Column(Float)
+    turnover = Column(Float)
+    cost = Column(Float)
+    net_return = Column(Float)
+
+class Prediction(Base):
+    __table__name = "predictions"
+
+    id = Column(Integer, primary_key=True, autoincremenent=True)
+    run_id = Column(Integer, ForeignKey("backtest_runs.id"), nullable=False)
+    ticker = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
+    target_value = Column(Float, nullable=True)
+    predicted_value = Column(Float, nullable=False)
+    position = Column(Float, nullable=False)
