@@ -30,6 +30,9 @@ def main():
     results["backtest_results"].to_parquet(out_dir / "backtest_results.parquet")
     results["metrics"].to_csv(out_dir / "metrics.csv")
 
+    with open(out_dir / "config.yaml", "w") as f:
+        yaml.safe_dump(config, f)
+
     print(f"\nSaved outputs to {out_dir}/")
     print("\nBacktest metrics:")
     print(results["metrics"].to_string())

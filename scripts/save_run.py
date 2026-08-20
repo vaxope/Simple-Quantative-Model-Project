@@ -1,6 +1,7 @@
 import math
 import os
 import pandas as pd
+import yaml
 from datetime import datetime
 
 from src.db.session import SessionLocal
@@ -13,22 +14,32 @@ def clean_float(val):
     return float(val)
 
 
-def save_run(run_dir: str, model_name: str = None, target_col: str = "target_vol_5d", cost_bps: float = 10.0):
+def save_run(run_dir: str):
     session = SessionLocal()
 
     try:
         run_name = os.path.basename(os.path.normpath(run_dir))
-        if model_name is None:
-            model_name = run_name
 
-        # Load run artifacts
+        # 1. Load run's saved config
+        config_path = os.path.join(run_dir, "config.yaml")
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(f"Missing config.yaml in {run_dir}. Run pipeline.py first.")
+
+        with open(config_path, "r") as f:
+            run_config = yaml.safe_load(f)
+
+        # Extract parameters directly from run's config
+        model_name = run_config["model"]["name"]
+        cost_bps = float(run_config["backtest"]["cost_bps"])
+        horizon = run_config["target"]["horizons"][0]
+        target_col = f"target_vol_{horizon}d"
+
+        # 2. Load artifacts
         metrics_path = os.path.join(run_dir, "metrics.csv")
         predictions_path = os.path.join(run_dir, "predictions.parquet")
         results_path = os.path.join(run_dir, "backtest_results.parquet")
 
         metrics_df = pd.read_csv(metrics_path)
-        
-        # Flexibly parse metrics regardless of header names
         if "Metric" in metrics_df.columns and "Value" in metrics_df.columns:
             metrics = metrics_df.set_index("Metric")["Value"].to_dict()
         else:
@@ -37,11 +48,10 @@ def save_run(run_dir: str, model_name: str = None, target_col: str = "target_vol
         predictions_df = pd.read_parquet(predictions_path)
         results_df = pd.read_parquet(results_path)
 
-        # Extract date bounds
         start_date = pd.to_datetime(results_df["date"]).min().date()
         end_date = pd.to_datetime(results_df["date"]).max().date()
 
-        # Parent BacktestRun record
+        # 3. Create parent record using exact config parameters
         run = BacktestRun(
             run_name=run_name,
             model_name=model_name,
@@ -53,13 +63,13 @@ def save_run(run_dir: str, model_name: str = None, target_col: str = "target_vol
             max_drawdown=clean_float(metrics.get("Max Drawdown")),
             calmar=clean_float(metrics.get("Calmar Ratio")),
             annualized_return=clean_float(metrics.get("Annualized Return")),
-            created_at=datetime.now()
+            created_at=datetime.now(),
         )
 
         session.add(run)
         session.flush()
 
-        # Child BacktestResult records
+        # 4. Create child records
         results = [
             BacktestResult(
                 run_id=run.id,
@@ -75,7 +85,6 @@ def save_run(run_dir: str, model_name: str = None, target_col: str = "target_vol
             for _, row in results_df.iterrows()
         ]
 
-        # Child Prediction records
         predictions = [
             Prediction(
                 run_id=run.id,

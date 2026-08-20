@@ -1,0 +1,52 @@
+backtest:
+  cost_bps: 5.0
+  periods_per_year: 252
+data:
+  end_date: '2026-08-01'
+  etfs:
+  - SPY
+  - QQQ
+  - VOO
+  force_download: false
+  price_path: data/raw_prices.parquet
+  start_date: '2018-01-01'
+  tickers:
+  - SPY
+  - QQQ
+  - VOO
+  - NVDA
+  - MSFT
+  - AAPL
+  use_sp500: true
+features:
+  lags:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 10
+  - 21
+  rsi_windows:
+  - 14
+  vol_windows:
+  - 5
+  - 10
+  - 20
+  zscore_windows:
+  - 5
+  - 10
+  - 20
+model:
+  name: xgb
+  step: null
+  test_size: 21
+  train_size: 252
+output:
+  run_name: baseline_xgb_vol5d
+position_sizing:
+  max_leverage: 2.0
+  target_vol: 0.15
+target:
+  horizons:
+  - 5
+  type: volatility
