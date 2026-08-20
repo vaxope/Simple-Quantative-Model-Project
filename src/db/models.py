@@ -12,7 +12,7 @@ class Price(Base):
     high = Column(Float)
     low = Column(Float)
     close = Column(Float)
-    volumn = Column(Float)
+    volume = Column(Float)
 
 class BacktestRun(Base):
     __tablename__ = "backtest_runs"
