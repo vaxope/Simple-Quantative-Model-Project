@@ -10,7 +10,7 @@ class PricePoint(BaseModel):
     close: float
     volume: float
 
-    model_config: ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
 class BacktestRunPoint(BaseModel):
     id: int
@@ -18,7 +18,7 @@ class BacktestRunPoint(BaseModel):
     model_name: str
     target_col: str
     cost_bps: float
-    start_date= date
+    start_date: date
     end_date: date
     sharpe: float
     max_drawdown: float
