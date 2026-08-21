@@ -1,6 +1,7 @@
 from datetime import date
 from pydantic import BaseModel, ConfigDict
 
+# Modified schemas from src/db/models.py but for pydantic
 class PricePoint(BaseModel):
     date: date
     open: float
