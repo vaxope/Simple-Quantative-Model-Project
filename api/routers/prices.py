@@ -21,8 +21,8 @@ def get_prices(
     query = db.query(Price).filter(Price.ticker == ticker)
 
     if start:
-        query = query.filter(Price.data >= start)
+        query = query.filter(Price.date >= start)
     if end:
-        query = query.filter(Price.data <= end)
+        query = query.filter(Price.date <= end)
 
-    return query.order_by(Price.data).all()
+    return query.order_by(Price.date).all()
