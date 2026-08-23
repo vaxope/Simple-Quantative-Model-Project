@@ -16,7 +16,9 @@ class Price(Base):
 
 class BacktestRun(Base):
     __tablename__ = "backtest_runs"
-
+    
+    status = Column(String, nullable=False, default="running")  # running | completed | failed
+    error_message = Column(String, nullable=True)
     id = Column(Integer, primary_key=True, autoincrement=True)
     run_name = Column(String, nullable=False)
     model_name = Column(String, nullable=False)
