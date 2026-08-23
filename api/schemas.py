@@ -47,3 +47,9 @@ class PredictionPoint(BaseModel):
     position: float
 
     model_config = ConfigDict(from_attributes=True)
+
+class BacktestRunCreate(BaseModel):
+    run_name: str
+    tickers: list[str]
+    model_name: str = "XGB"
+    cost_bps: float = 5.0
