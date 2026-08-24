@@ -67,12 +67,19 @@ def create_backtest(
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
+    # Determine target_col default from config before async launch
+    with open("config.yaml", "r") as f:
+        config = yaml.safe_load(f)
+    horizon = config["target"]["horizons"][0]
+    
     # Build backtestrun row from payload
     run = BacktestRun(
+        run_name=getattr(payload, "run_name", f"{payload.model_name}_run"),
         status="running",
         tickers=",".join(payload.tickers),
         model_name=payload.model_name,
         cost_bps=payload.cost_bps,
+        target_col=f"taget_col_{horizon}d"
     )
 
     # Persist parent run to database so run.id is generated before async launch
@@ -89,3 +96,4 @@ def get_backtest(run_id: int, db: Session = Depends(get_db)):
     run = db.query(BacktestRun).filter(BacktestRun.id == run_id).first()
     if not run:
         raise HTTPException(status_code=404, detail=f"Backtest run {run_id} not found")
+    return run
