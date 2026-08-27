@@ -10,9 +10,16 @@ export async function getPrices(ticker, { start, end } = {}) {
 }
 
 export async function getLatestSignals() {
-  
+  const res = await fetch(`${BASE_URL}/api/signals/latest`);
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+  return res.json();
 }
 
-export async function getSignal(ticker, {start, end}) {
-    
+export async function getSignal(ticker, {start, end} = {}) {
+  const params = new URLSearchParams();
+  if (start) params.set('start', start);
+  if (end) params.set('end', end);
+  const res = await fetch(`${BASE_URL}/api/signals/${ticker}?${params}`);
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+  return res.json();
 }
