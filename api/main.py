@@ -3,7 +3,6 @@ from api.routers import prices, signals, backtests
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Trading Dashboard API")
-app.include_router(prices.router, prefix="/api", tags=["prices"])
 
 origins = [
     "http://localhost:5173", 

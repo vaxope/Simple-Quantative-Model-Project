@@ -9,20 +9,13 @@ export default function App() {
   const LIMIT = 5;
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/AAPL')
+    fetch('http://127.0.0.1:8000/api/prices/AAPL?start=2024-01-01')
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        console.log("API Response Payload:", data);
-        
-        // Extract the array regardless of whether key is 'data', 'items', 'prices', or a direct list
-        const priceList = Array.isArray(data) 
-          ? data 
-          : (data.items || data.data || data.prices || []);
-
-        setPrices(priceList);
+        setPrices(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -38,12 +31,9 @@ export default function App() {
     <div style={{ padding: '20px' }}>
       <h2>Showing First {Math.min(LIMIT, prices.length)} Prices</h2>
       
-      {/* Slice the array to show only the first N items */}
-      {prices.slice(0, LIMIT).map((item, index) => (
-        <div key={index} style={{ marginBottom: '8px' }}>
-          {/* If property keys differ, adjust date/price keys below */}
-          <strong>{item.date || item.timestamp || item.created_at || index}</strong>: 
-          ${item.close ?? item.price ?? item.close_price ?? JSON.stringify(item)}
+      {prices.slice(0, LIMIT).map((item) => (
+        <div key={item.date} style={{ marginBottom: '8px' }}>
+          <strong>{item.date}</strong>: ${item.close.toFixed(2)}
         </div>
       ))}
     </div>
