@@ -79,7 +79,7 @@ def create_backtest(
         tickers=",".join(payload.tickers),
         model_name=payload.model_name,
         cost_bps=payload.cost_bps,
-        target_col=f"taget_col_{horizon}d"
+        target_col=f"target_col_{horizon}d"
     )
 
     # Persist parent run to database so run.id is generated before async launch
@@ -91,9 +91,28 @@ def create_backtest(
     background_tasks.add_task(run_and_save, run.id, payload.tickers, payload.model_name, payload.cost_bps)
 
     return run
+
+# gets backtests
 @router.get("/{run_id}", response_model=BacktestRunPoint)
 def get_backtest(run_id: int, db: Session = Depends(get_db)):
     run = db.query(BacktestRun).filter(BacktestRun.id == run_id).first()
     if not run:
         raise HTTPException(status_code=404, detail=f"Backtest run {run_id} not found")
     return run
+
+# Gets backtests results filtered by run_id ordered by date
+@router.get("/{run_id}", response_model=BacktestRunPoint)
+def get_backtests_results(run_id: int, db: Session = Depends(get_db)):
+    run = db.query(BacktestRun).filter(BacktestRun.id == run_id).first()
+
+    if not run:
+        raise HTTPException(status_code=404, detail=f"Backtest run {run_id} not found")
+    
+    results = (
+        db.query(BacktestResult)
+        .filter(BacktestResult.run_id == run_id)
+        .order_by(BacktestResult.date.asc())
+        .all()
+    )
+
+    return results
