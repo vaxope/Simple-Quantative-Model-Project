@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getPrices } from '../client';
 
 // Fetches and isplays a sliced list of historical prices for a specific ticker 
-export default function Pricelist({ ticker, limit = 5, start = '2024-01-1' }) {
+export default function Pricelist({ ticker, limit = 5, start = '2024-01-01' }) {
   // State management for raw price data, loading status, and error handling
   const [prices, setPrices] = useState([]);
   const [loading, setLoading] = useState(true);

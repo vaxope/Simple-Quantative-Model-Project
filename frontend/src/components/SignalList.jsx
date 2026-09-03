@@ -30,7 +30,7 @@ export default function SignalList() {
       <h3>Latest Trading Signals</h3>
       {signals.map((item) => (
         <div key={item.ticker} style={{ marginBottom: '4px' }}>
-          <strong>{item.ticker}</strong> ({item.date}): {item.signal} (Score: {item.score ?? 'N/A'})
+          <strong>{item.ticker}</strong> ({item.date}): predicted vol {item.predicted_value.toFixed(4)}, position {item.position.toFixed(2)}
         </div>
       ))}
     </div>
