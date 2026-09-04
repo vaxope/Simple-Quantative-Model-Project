@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 import yaml
 from src.db.session import get_db, SessionLocal
 from src.db.models import BacktestRun, BacktestResult, Prediction
-from api.schemas import BacktestRunCreate, BacktestRunPoint
 from src.pipeline import run_full_pipeline
 from src.db.utils import clean_float, build_prediction_rows, build_result_rows
 from api.schemas import BacktestRunCreate, BacktestRunPoint, BacktestResultPoint
