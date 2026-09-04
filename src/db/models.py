@@ -16,21 +16,25 @@ class Price(Base):
 
 class BacktestRun(Base):
     __tablename__ = "backtest_runs"
-    
-    status = Column(String, nullable=False, default="running")  # running | completed | failed
-    error_message = Column(String, nullable=True)
-    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    id = Column(Integer, primary_key=True, index=True)
     run_name = Column(String, nullable=False)
+    status = Column(String, default="running")
+    ticker = Column(String, nullable=True)
     model_name = Column(String, nullable=False)
     target_col = Column(String, nullable=False)
     cost_bps = Column(Float, nullable=False)
-    start_date= Column(Date, nullable=False)
-    end_date = Column(Date, nullable=False)
-    sharpe = Column(Float, nullable=False)
-    max_drawdown = Column(Float, nullable=False)
-    calmar = Column(Float, nullable=False)
-    annualized_return = Column(Float, nullable=False)
-    created_at = Column(DateTime, nullable=False)
+    
+    # Dates & status messages
+    start_date = Column(Date, nullable=True)
+    end_date = Column(Date, nullable=True)
+    error_message = Column(String, nullable=True)
+
+    # Calculated asynchronously upon completion
+    sharpe = Column(Float, nullable=True)
+    max_drawdown = Column(Float, nullable=True)
+    calmar = Column(Float, nullable=True)
+    annualized_return = Column(Float, nullable=True)
 
 class BacktestResult(Base):
     __tablename__ = "backtest_results"

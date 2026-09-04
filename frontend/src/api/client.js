@@ -29,7 +29,7 @@ export async function getSignal(ticker, {start, end} = {}) {
 
 // Fetches backtest results
 export async function getBacktestResults(runId) {
-  const res = await fetch('${BASE_URL}/api/backtests/${runID}/results');
-  if (!res.ok) throw new Error('HTTP error! Status: ${res.status}');
-  return res.json
+  const res = await fetch(`${BASE_URL}/api/backtests/${runId}/results`);
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+  return res.json();
 }

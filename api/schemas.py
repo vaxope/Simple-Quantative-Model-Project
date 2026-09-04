@@ -18,8 +18,9 @@ class BacktestRunPoint(BaseModel):
     model_name: str
     target_col: str
     cost_bps: float
-    start_date: date
-    end_date: date
+    status: str
+    start_date: date | None = None
+    end_date: date | None = None
     sharpe: float | None = None
     max_drawdown: float | None = None
     calmar: float | None = None
@@ -51,5 +52,5 @@ class PredictionPoint(BaseModel):
 class BacktestRunCreate(BaseModel):
     run_name: str
     tickers: list[str]
-    model_name: str = "XGB"
+    model_name: str = "xgb"
     cost_bps: float = 5.0
