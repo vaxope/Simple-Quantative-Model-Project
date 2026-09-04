@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getLatestSignals } from '../client'
+import { getLatestSignals } from '../api/client'
 
 // Fetches and renders latest signals from API
 export default function SignalList() {

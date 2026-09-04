@@ -26,3 +26,10 @@ export async function getSignal(ticker, {start, end} = {}) {
   if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
   return res.json();
 }
+
+// Fetches backtest results
+export async function getBacktestResults(runId) {
+  const res = await fetch('${BASE_URL}/api/backtests/${runID}/results');
+  if (!res.ok) throw new Error('HTTP error! Status: ${res.status}');
+  return res.json
+}

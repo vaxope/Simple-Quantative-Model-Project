@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getPrices } from '../client';
+import { getPrices } from '../api/client';
 
 // Fetches and isplays a sliced list of historical prices for a specific ticker 
 export default function Pricelist({ ticker, limit = 5, start = '2024-01-01' }) {
