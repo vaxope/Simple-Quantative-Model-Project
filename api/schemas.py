@@ -19,6 +19,7 @@ class BacktestRunPoint(BaseModel):
     target_col: str
     cost_bps: float
     status: str
+    error_message: str | None = None 
     start_date: date | None = None
     end_date: date | None = None
     sharpe: float | None = None

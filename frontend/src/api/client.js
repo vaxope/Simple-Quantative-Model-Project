@@ -34,17 +34,18 @@ export async function getBacktestResults(runId) {
   return res.json();
 }
 
-export const createBacktest = async(payload) => {
-  const response = await fetch(`/api/backtests/`, {
+export const createBacktest = async (payload) => {
+  const response = await fetch(`${BASE_URL}/api/backtests/`, {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload)
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   });
+  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  return response.json();
+};
 
-  return response.json()
-}
-
-export const getBacktest = async (runId) {
-  const response = await fetch(`/api/backtests/${runId}`)
-  return response.json()
-}
+export const getBacktest = async (runId) => {
+  const response = await fetch(`${BASE_URL}/api/backtests/${runId}`);
+  if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+  return response.json();
+};
