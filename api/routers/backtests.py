@@ -133,3 +133,11 @@ def get_backtests_results(run_id: int, db: Session = Depends(get_db)):
     )
 
     return results
+
+@router.get("/", response_model=list[BacktestRunPoint])
+def list_backtests(db: Session = Depends(get_db)):
+    return (
+        db.query(BacktestRun)
+        .order_by(BacktestRun.id.desc())
+        .all()
+    )
