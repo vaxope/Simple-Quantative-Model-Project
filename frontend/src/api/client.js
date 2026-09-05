@@ -49,3 +49,9 @@ export const getBacktest = async (runId) => {
   if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
   return response.json();
 };
+
+export async function listBacktests() {
+  const res = await fetch(`${BASE_URL}/api/backtests`);
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+  return res.json();
+}
